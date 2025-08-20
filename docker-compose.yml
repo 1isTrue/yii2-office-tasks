@@ -1,0 +1,30 @@
+version: '2'
+services:
+  php:
+    image: yiisoftware/yii2-php:8.3-apache
+    volumes:
+      - ~/.composer-docker/cache:/root/.composer/cache:delegated
+      - ./:/app:delegated
+    ports:
+      - '8000:80'
+    env_file:
+      - .env
+    depends_on:
+      - mysql
+    command: >
+      sh -c "php yii migrate --interactive=0 && apache2-foreground"
+
+  mysql:
+    image: mysql:5.7
+    volumes:
+      - mysql_data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_password
+      - MYSQL_DATABASE=your_database_name
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root_password
+    ports:
+      - '3306:3306'
+
+volumes:
+  mysql_data:
